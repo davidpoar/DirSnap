@@ -1,0 +1,25 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+
+## Rider
+.idea/
+
+## VS Code
+.vscode/
+
+## Build output
+publish/
+out/
+
+## Logs
+*.log
+
+## SQLite databases (don't commit test DBs)
+*.db
+*.sqlite
+*.sqlite3
