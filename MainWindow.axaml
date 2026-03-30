@@ -6,6 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Viewer.MainWindow"
         x:CompileBindings="False"
+        Icon="avares://Viewer/Assets/app-icon.png"
         Title="SQLite DB Viewer">
 
     <Window.Styles>

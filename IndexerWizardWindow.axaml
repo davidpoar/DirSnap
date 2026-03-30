@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Viewer.IndexerWizardWindow"
         Title="Asistente de Indexación" Width="500" SizeToContent="Height"
+        Icon="avares://Viewer/Assets/app-icon.png"
         WindowStartupLocation="CenterOwner" CanResize="False">
     
     <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="20">
