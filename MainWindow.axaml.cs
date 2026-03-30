@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Microsoft.Data.Sqlite;
+using Viewer.Helpers;
 using Viewer.Models;
 
 namespace Viewer;
@@ -17,17 +19,24 @@ public partial class MainWindow : Window
 {
     private List<FileItem> _db1Items = new();
     private List<FileItem> _db2Items = new();
-    
+
     // Store in-memory
     private List<FileItem> _db1AllItems = new();
     private List<FileItem> _db2AllItems = new();
 
     private bool _isSyncing = false;
 
+    private static readonly HashSet<string> _imageExtensions = new(StringComparer.OrdinalIgnoreCase)
+        { ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp" };
+
     public MainWindow()
     {
         InitializeComponent();
+        // Kick off FFmpeg initialization early (background download if needed)
+        _ = VideoThumbnailHelper.EnsureFfmpegAsync();
     }
+
+
 
     private async void BtnLoadDb1_Click(object? sender, RoutedEventArgs e)
     {
@@ -349,25 +358,58 @@ public partial class MainWindow : Window
         if (item == null) return;
 
         if (pathTextControl != null)
-        {
             pathTextControl.Text = item.FullPath;
-        }
 
-        var ext = Path.GetExtension(item.FullPath)?.ToLowerInvariant();
-        if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".bmp" || ext == ".gif")
+        if (!File.Exists(item.FullPath)) return;
+
+        var ext = Path.GetExtension(item.FullPath);
+
+        if (_imageExtensions.Contains(ext ?? ""))
         {
-            if (File.Exists(item.FullPath))
+            try
             {
-                try
+                Task.Run(() =>
                 {
-                    Task.Run(() =>
-                    {
-                        var bitmap = new Bitmap(item.FullPath);
-                        Avalonia.Threading.Dispatcher.UIThread.Post(() => imgControl.Source = bitmap);
-                    });
-                }
-                catch { /* Handle invalid images gracefully */ }
+                    var bitmap = new Bitmap(item.FullPath);
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => imgControl.Source = bitmap);
+                });
             }
+            catch { /* Handle invalid images gracefully */ }
+        }
+        else if (VideoThumbnailHelper.VideoExtensions.Contains(ext ?? ""))
+        {
+            var fullPath = item.FullPath; // capture for closure
+            if (pathTextControl != null)
+                pathTextControl.Text = fullPath + " ⏳ descargando FFmpeg (solo primera vez)...";
+
+            Task.Run(async () =>
+            {
+                // Update to 'generando preview' once FFmpeg is ready
+                var ffmpegError = await VideoThumbnailHelper.EnsureFfmpegAsync();
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (pathTextControl != null)
+                        pathTextControl.Text = ffmpegError != null
+                            ? fullPath + $" ⚠️ {ffmpegError}"
+                            : fullPath + " ⏳ generando preview...";
+                });
+
+                if (ffmpegError != null) return;
+
+                var (thumbPath, thumbError) = await VideoThumbnailHelper.GetVideoThumbnailAsync(fullPath);
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (thumbPath != null)
+                    {
+                        try { imgControl.Source = new Bitmap(thumbPath); }
+                        catch { }
+                    }
+                    if (pathTextControl != null)
+                        pathTextControl.Text = thumbError != null
+                            ? fullPath + $" ⚠️ {thumbError}"
+                            : fullPath;
+                });
+            });
         }
     }
 }
