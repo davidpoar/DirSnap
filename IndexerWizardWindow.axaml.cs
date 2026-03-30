@@ -75,9 +75,11 @@ public partial class IndexerWizardWindow : Window
             TxtProgress.Text = msg;
         });
 
+        bool calculateHash = ChkCalculateHash.IsChecked == true;
+
         try
         {
-            await FileIndexerHelper.IndexDirectoryAsync(_sourcePath, _destPath, progress);
+            await FileIndexerHelper.IndexDirectoryAsync(_sourcePath, _destPath, calculateHash, progress);
 
             // Hide progress bar, show completion
             PrgStatus.IsVisible = false;

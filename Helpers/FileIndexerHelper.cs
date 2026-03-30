@@ -3,12 +3,13 @@ using System.IO;
 using Microsoft.Data.Sqlite;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Viewer.Helpers;
 
 public static class FileIndexerHelper
 {
-    public static async Task IndexDirectoryAsync(string rootPath, string dbPath, IProgress<string> progress)
+    public static async Task IndexDirectoryAsync(string rootPath, string dbPath, bool calculateHash, IProgress<string> progress)
     {
         await Task.Run(() => 
         {
@@ -29,13 +30,14 @@ public static class FileIndexerHelper
 
             var transaction = connection.BeginTransaction();
             using var cmd = connection.CreateCommand();
-            cmd.CommandText = @"INSERT OR REPLACE INTO Files (FileName, FullPath, FileSize, LastModified) VALUES ($name,$path,$size,$mod)";
+            cmd.CommandText = @"INSERT OR REPLACE INTO Files (FileName, FullPath, FileSize, LastModified, Hash) VALUES ($name,$path,$size,$mod,$hash)";
             cmd.Transaction = transaction;
 
             var pName = cmd.CreateParameter(); pName.ParameterName = "$name"; cmd.Parameters.Add(pName);
             var pPath = cmd.CreateParameter(); pPath.ParameterName = "$path"; cmd.Parameters.Add(pPath);
             var pSize = cmd.CreateParameter(); pSize.ParameterName = "$size"; cmd.Parameters.Add(pSize);
             var pMod = cmd.CreateParameter();  pMod.ParameterName = "$mod";  cmd.Parameters.Add(pMod);
+            var pHash = cmd.CreateParameter(); pHash.ParameterName = "$hash"; cmd.Parameters.Add(pHash);
 
             int count = 0;
             progress?.Report("Iniciando escaneo...");
@@ -50,10 +52,22 @@ public static class FileIndexerHelper
                     pSize.Value = info.Length;
                     pMod.Value = info.LastWriteTimeUtc.Ticks;
 
+                    if (calculateHash)
+                    {
+                        using var stream = File.OpenRead(file);
+                        using var sha256 = SHA256.Create();
+                        var hashBytes = sha256.ComputeHash(stream);
+                        pHash.Value = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                    }
+                    else
+                    {
+                        pHash.Value = DBNull.Value;
+                    }
+
                     cmd.ExecuteNonQuery();
                     count++;
 
-                    if (count % 5000 == 0)
+                    if (count % 1000 == 0)
                     {
                         transaction.Commit();
                         transaction = connection.BeginTransaction();

@@ -19,6 +19,8 @@
                 <TextBox Name="TxtDbDest" Grid.Column="0" IsReadOnly="True" Watermark="Archivo de destino (.db)..."/>
                 <Button Name="BtnSelectDest" Grid.Column="2" Content="..." Width="30" Click="BtnSelectDest_Click"/>
             </Grid>
+
+            <CheckBox Name="ChkCalculateHash" Content="Calcular Hash SHA256 (Aviso: proceso muy lento)" Margin="0,5,0,0"/>
         </StackPanel>
 
         <!-- Progress -->
