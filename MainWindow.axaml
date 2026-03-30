@@ -19,17 +19,26 @@
 
     <Grid RowDefinitions="Auto, *, 250" Margin="10">
         <!-- Top Panel: DB Loaders -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,10" Spacing="10">
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <Button Name="BtnLoadDb1" Content="Load DB 1" Click="BtnLoadDb1_Click"/>
-                <TextBlock Name="TxtDb1Path" VerticalAlignment="Center" Text="No DB 1 loaded" Width="500" TextTrimming="CharacterEllipsis"/>
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Spacing="10">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Name="BtnLoadDb1" Content="Load DB 1" Click="BtnLoadDb1_Click"/>
+                    <TextBlock Name="TxtDb1Path" VerticalAlignment="Center" Text="No DB 1 loaded" Width="500" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button Name="BtnLoadDb2" Content="Load DB 2" Click="BtnLoadDb2_Click"/>
+                    <TextBlock Name="TxtDb2Path" VerticalAlignment="Center" Text="No DB 2 loaded" Width="500" TextTrimming="CharacterEllipsis"/>
+                </StackPanel>
             </StackPanel>
-            
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <Button Name="BtnLoadDb2" Content="Load DB 2" Click="BtnLoadDb2_Click"/>
-                <TextBlock Name="TxtDb2Path" VerticalAlignment="Center" Text="No DB 2 loaded" Width="500" TextTrimming="CharacterEllipsis"/>
-            </StackPanel>
-        </StackPanel>
+
+            <Button Name="BtnOpenWizard" Grid.Column="1" Content="Generar DB desde carpeta..." Click="BtnOpenWizard_Click" VerticalAlignment="Top" Padding="15,5"/>
+        </Grid>
 
         <!-- Middle Panel: Grids and Filters -->
         <Grid Grid.Row="1" ColumnDefinitions="*, 5, *">

@@ -54,31 +54,35 @@ public partial class MainWindow : Window
         
         if (files.Count > 0)
         {
-            var path = files[0].Path.LocalPath;
-            TxtDb1Path.Text = $"Loading {path}...";
-            BtnLoadDb1.IsEnabled = false;
+            await LoadDb1Async(files[0].Path.LocalPath);
+        }
+    }
 
-            try
-            {
-                var newItems = await Task.Run(() => LoadDatabase(path));
-                _db1AllItems = newItems;
+    private async Task LoadDb1Async(string path)
+    {
+        TxtDb1Path.Text = $"Loading {path}...";
+        BtnLoadDb1.IsEnabled = false;
 
-                TxtDb1Path.Text = $"Cross-referencing {path}...";
-                await Task.Run(() => CrossReference());
+        try
+        {
+            var newItems = await Task.Run(() => LoadDatabase(path));
+            _db1AllItems = newItems;
 
-                TxtDb1Path.Text = path;
-                UpdateStats();
-                await ApplyFilter1Async();
-                await ApplyFilter2Async(); // DB1 change affects DB2 matching as well
-            }
-            catch (Exception)
-            {
-                TxtDb1Path.Text = $"Failed to load {path}";
-            }
-            finally
-            {
-                BtnLoadDb1.IsEnabled = true;
-            }
+            TxtDb1Path.Text = $"Cross-referencing {path}...";
+            await Task.Run(() => CrossReference());
+
+            TxtDb1Path.Text = path;
+            UpdateStats();
+            await ApplyFilter1Async();
+            await ApplyFilter2Async(); // DB1 change affects DB2 matching as well
+        }
+        catch (Exception)
+        {
+            TxtDb1Path.Text = $"Failed to load {path}";
+        }
+        finally
+        {
+            BtnLoadDb1.IsEnabled = true;
         }
     }
 
@@ -98,30 +102,52 @@ public partial class MainWindow : Window
         
         if (files.Count > 0)
         {
-            var path = files[0].Path.LocalPath;
-            TxtDb2Path.Text = $"Loading {path}...";
-            BtnLoadDb2.IsEnabled = false;
+            await LoadDb2Async(files[0].Path.LocalPath);
+        }
+    }
 
-            try
+    private async Task LoadDb2Async(string path)
+    {
+        TxtDb2Path.Text = $"Loading {path}...";
+        BtnLoadDb2.IsEnabled = false;
+
+        try
+        {
+            var newItems = await Task.Run(() => LoadDatabase(path));
+            _db2AllItems = newItems;
+
+            TxtDb2Path.Text = $"Cross-referencing {path}...";
+            await Task.Run(() => CrossReference());
+
+            TxtDb2Path.Text = path;
+            UpdateStats();
+            await ApplyFilter1Async(); // DB2 change affects DB1 matching as well
+            await ApplyFilter2Async(); 
+        }
+        catch (Exception)
+        {
+            TxtDb2Path.Text = $"Failed to load {path}";
+        }
+        finally
+        {
+            BtnLoadDb2.IsEnabled = true;
+        }
+    }
+
+    private async void BtnOpenWizard_Click(object? sender, RoutedEventArgs e)
+    {
+        var wizard = new IndexerWizardWindow();
+        var result = await wizard.ShowDialog<IndexerWizardResult>(this);
+
+        if (result != null)
+        {
+            if (result.LoadIntoPanel == 1 && !string.IsNullOrEmpty(result.DbPath))
             {
-                var newItems = await Task.Run(() => LoadDatabase(path));
-                _db2AllItems = newItems;
-
-                TxtDb2Path.Text = $"Cross-referencing {path}...";
-                await Task.Run(() => CrossReference());
-
-                TxtDb2Path.Text = path;
-                UpdateStats();
-                await ApplyFilter1Async(); // DB2 change affects DB1 matching as well
-                await ApplyFilter2Async(); 
+                await LoadDb1Async(result.DbPath);
             }
-            catch (Exception)
+            else if (result.LoadIntoPanel == 2 && !string.IsNullOrEmpty(result.DbPath))
             {
-                TxtDb2Path.Text = $"Failed to load {path}";
-            }
-            finally
-            {
-                BtnLoadDb2.IsEnabled = true;
+                await LoadDb2Async(result.DbPath);
             }
         }
     }

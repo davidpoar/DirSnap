@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Viewer.IndexerWizardWindow"
+        Title="Asistente de Indexación" Width="500" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner" CanResize="False">
+    
+    <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="20">
+        <!-- Step 1: Config -->
+        <StackPanel Name="PanelConfig" Grid.Row="0" Spacing="10">
+            <TextBlock Text="1. Selecciona la carpeta a escanear:" FontWeight="Bold"/>
+            <Grid ColumnDefinitions="*, 5, Auto">
+                <TextBox Name="TxtSourceFolder" Grid.Column="0" IsReadOnly="True" Watermark="Ruta de origen..."/>
+                <Button Name="BtnSelectSource" Grid.Column="2" Content="..." Width="30" Click="BtnSelectSource_Click"/>
+            </Grid>
+
+            <TextBlock Text="2. Selecciona dónde guardar la Base de Datos:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <Grid ColumnDefinitions="*, 5, Auto">
+                <TextBox Name="TxtDbDest" Grid.Column="0" IsReadOnly="True" Watermark="Archivo de destino (.db)..."/>
+                <Button Name="BtnSelectDest" Grid.Column="2" Content="..." Width="30" Click="BtnSelectDest_Click"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Progress -->
+        <StackPanel Name="PanelProgress" Grid.Row="1" Spacing="10" Margin="0,20,0,0" IsVisible="False">
+            <TextBlock Text="Progreso de indexación:" FontWeight="Bold"/>
+            <ProgressBar Name="PrgStatus" IsIndeterminate="True" Height="20" HorizontalAlignment="Stretch"/>
+            <TextBlock Name="TxtProgress" Text="Preparando..." HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Completion options -->
+        <StackPanel Name="PanelCompletion" Grid.Row="2" Spacing="10" Margin="0,20,0,0" IsVisible="False">
+            <TextBlock Text="¡Indexación Completada!" FontWeight="Bold" Foreground="#32A852" HorizontalAlignment="Center" FontSize="16"/>
+            <TextBlock Text="¿Dónde quieres cargar esta base de datos?" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10,0,0">
+                <Button Name="BtnLoadDb1" Content="Cargar en DB 1" Click="BtnLoadDb1_Click"/>
+                <Button Name="BtnLoadDb2" Content="Cargar en DB 2" Click="BtnLoadDb2_Click"/>
+                <Button Name="BtnCloseCompletion" Classes="accent" Content="No cargar (Cerrar)" Click="BtnClose_Click"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Start/Cancel Buttons -->
+        <StackPanel Name="PanelButtons" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,20,0,0">
+            <Button Name="BtnCancel" Content="Cancelar" Click="BtnCancel_Click"/>
+            <Button Name="BtnStart" Content="Iniciar" Click="BtnStart_Click" IsEnabled="False"/>
+        </StackPanel>
+    </Grid>
+</Window>
