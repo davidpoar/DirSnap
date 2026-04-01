@@ -31,6 +31,7 @@ Una vez que tienes al menos dos archivos `.db` (inventarios), puedes cruzarlos:
 3. Automáticamente, el programa **comparará ambos lados**. Podrás usar filtros y colores para orientarte:
    - Las filas iluminadas en **verde** significan que el archivo existe en ambas partes (¡lo tienes copiado/respaldado!).
    - Las filas en **rojo** indican que el archivo solo está en ese lado (¡cuidado, podrías perderlo si no lo copias al otro lado!).
+   > **Nota importante:** El programa verifica si un archivo está en ambos discos/carpetas analizando su contenido y tamaño, **no su ubicación**. No determina si los archivos están guardados en las mismas subcarpetas en ambos lados, sino que asegura que no los hayas perdido, independientemente de cómo estén organizados.
 4. Haz clic en cualquier archivo de las listas para ver sus detalles exactos y una previsualización interactiva en el panel inferior (soporta imágenes y genera automáticamente miniaturas para videos).
 
 ---
