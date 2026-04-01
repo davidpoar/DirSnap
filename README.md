@@ -13,26 +13,32 @@
 
 ---
 
-## 🚀 ¿Cómo se usa? (Guía Rápida)
+## 🚀 ¿Cómo se usa? (Guía paso a paso)
 
-El uso del programa está pensado para ser muy visual y directo. Consta principalmente de dos pasos:
+El uso del programa es muy simple y consta de dos fases: **crear inventarios** de tus discos/carpetas y luego **compararlos** entre sí.
 
-### 1. Crear un Índice (Base de datos) de tus carpetas
-Si aún no has escaneado tus carpetas, primero debes crear tus índices:
+### Fase 1: Crear el inventario de tus archivos (Indexar)
+Para poder comparar, primero necesitas crear un archivo `.db` (un inventario) por cada disco o carpeta que quieras analizar.
 1. Abre el programa.
-2. Abre la herramienta para **crear una nueva base de datos** (Asistente de Indexación / Wizard).
-3. Selecciona la carpeta, pendrive o disco duro que quieres inventariar.
-4. El programa rastreará todos los archivos (extrayendo su tamaño y fecha) y creará un archivo `.db`. ¡Este archivo es tu inventario!
+2. Haz clic en el botón superior derecho que dice **"Generar DB desde carpeta..."**. Esto abrirá la ventana del *Asistente de Indexación*.
+3. En el paso **"1. Selecciona la carpeta a escanear:"**, haz clic en el botón con puntos suspensivos (`...`) y elige el disco duro o carpeta que quieres inventariar.
+4. En el paso **"2. Selecciona dónde guardar la Base de Datos:"**, haz clic en su botón (`...`) y elige dónde se guardará el archivo `.db` (tu inventario con los resultados) y ponle un nombre.
+5. Haz clic en el botón **"Iniciar"** abajo a la derecha. 
+6. El programa rastreará todos tus archivos muy rápido. Al terminar, mostrará el mensaje *¡Indexación Completada!*. Haz clic en **"No cargar (Cerrar)"** o elige cargarla directamente en uno de los paneles.
 
-### 2. Comparar y Explorar
-Una vez que tienes al menos dos archivos `.db` (inventarios), puedes cruzarlos:
-1. En la ventana principal del programa verás dos paneles grandes (Izquierdo y Derecho).
-2. Carga un archivo `.db` en el panel izquierdo que acabas de crear, y otro `.db` distinto en el panel derecho.
-3. Automáticamente, el programa **comparará ambos lados**. Podrás usar filtros y colores para orientarte:
-   - Las filas iluminadas en **verde** significan que el archivo existe en ambas partes (¡lo tienes copiado/respaldado!).
-   - Las filas en **rojo** indican que el archivo solo está en ese lado (¡cuidado, podrías perderlo si no lo copias al otro lado!).
-   > **Nota importante:** El programa verifica si un archivo está en ambos discos/carpetas analizando su contenido y tamaño, **no su ubicación**. No determina si los archivos están guardados en las mismas subcarpetas en ambos lados, sino que asegura que no los hayas perdido, independientemente de cómo estén organizados.
-4. Haz clic en cualquier archivo de las listas para ver sus detalles exactos y una previsualización interactiva en el panel inferior (soporta imágenes y genera automáticamente miniaturas para videos).
+> *Consejo: Repite este proceso para tu otro disco duro o carpeta, así tendrás dos archivos `.db` listos para comparar.*
+
+### Fase 2: Comparar y Explorar  
+Ya tienes tus dos inventarios (`.db`). Ahora vamos a cruzarlos para ver qué archivos faltan en uno de tus discos:
+1. En la ventana principal, arriba a la izquierda, verás dos botones: **"Load DB 1"** y **"Load DB 2"**.
+2. Haz clic en **"Load DB 1"** y carga el primer inventario (`.db`) que creaste (ej. tu pc principal).
+3. Haz clic en **"Load DB 2"** y carga tu segundo inventario (ej. tu disco de respaldo). 
+4. ¡Listo! Automáticamente verás todo tu contenido organizado en dos listas. Presta mucha atención a los colores:
+   - 🟢 **Filas en color VERDE**: El archivo es idéntico y existe en AMBOS discos. (Lo tienes guardado en ambos lados).
+   - 🔴 **Filas en color ROJO**: El archivo SOLO existe en esa lista. (¡Cuidado, si es un archivo rojo, significa que no lo tienes respaldado en el otro disco!).
+   
+   > **Nota importante:** El programa sabe que es el mismo archivo mirando su *tamaño* y su *contenido*, **sin importarle en qué carpeta esté guardado**. Incluso si lo moviste de carpeta, si es el exacto mismo archivo, te saldrá en verde.
+5. Puedes hacer clic sobre cualquier archivo de la lista para ver abajo una vista previa interactiva (verás fotos y miniaturas de videos).
 
 ---
 
