@@ -1,0 +1,60 @@
+name: Build and Release
+on:
+  push:
+    tags:
+      - "v*.*.*" # Se ejecutará automáticamente al crear un tag (ej: v1.0.0)
+
+jobs:
+  release:
+    name: Create Cross-Platform Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+            name: DirSnap-Linux-x64
+          - os: windows-latest
+            rid: win-x64
+            name: DirSnap-Windows-x64
+          - os: macos-latest
+            rid: osx-x64
+            name: DirSnap-macOS-x64
+
+    # Otorgar permisos al bot de GitHub para que pueda crear la Release
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish App (Self-Contained)
+        run: dotnet publish Viewer.csproj -c Release -r ${{ matrix.rid }} -p:PublishSingleFile=true --self-contained true -o ./publish
+
+      - name: Create Zip Archive (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Compress-Archive -Path ./publish/* -DestinationPath ./${{ matrix.name }}.zip
+
+      - name: Create Tar.gz Archive (Linux & macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd ./publish
+          tar -czvf ../${{ matrix.name }}.tar.gz *
+          cd ..
+
+      - name: Upload to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.zip
+            *.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
